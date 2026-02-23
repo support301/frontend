@@ -89,7 +89,7 @@ export interface UpdateTrainerPayload {
 export const trainerApi = createApi({
   reducerPath: "trainerApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:8000/api/trainers/",
+    baseUrl: "https://backend-g0z1.onrender.com/api/trainers/",
     prepareHeaders: (headers) => {
       if (typeof window !== "undefined") {
         const token = localStorage.getItem("token");

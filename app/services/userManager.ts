@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { User } from "@/app/validations/user";
 
-const BASE_URL = "http://localhost:8000/api/userManagers/";
+const BASE_URL = "https://backend-g0z1.onrender.com/api/userManagers/";
 
 interface ApiResponse<T> {
   data: T;

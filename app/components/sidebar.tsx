@@ -1,4 +1,3 @@
-
 "use client";
 import Link from "next/link";
 import Image from "next/image";
@@ -15,11 +14,13 @@ import {
 } from "lucide-react";
 import ThemeToggle from "./ThemeToggle";
 import { useState, useEffect } from "react";
+import { getUserFromToken } from "@/app/validations/currentUser";
 
 export default function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const user = getUserFromToken();
 
   useEffect(() => {
     const checkMobile = () => {
@@ -27,8 +28,8 @@ export default function Sidebar() {
     };
 
     checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
   const toggleCollapse = () => setCollapsed(!collapsed);
@@ -63,7 +64,7 @@ export default function Sidebar() {
         type="checkbox"
         className="drawer-toggle"
         checked={isMobileOpen}
-        onChange={() => { }}
+        onChange={() => {}}
       />
 
       <div className="drawer-side z-50 hide-scrollbar">
@@ -87,10 +88,12 @@ export default function Sidebar() {
           {isMobile && (
             <div className="flex items-center justify-between mb-8">
               <div className="flex items-center gap-4">
-                <Link href="/" onClick={closeMobileMenu} className="flex items-center gap-4 group">
-                  <div className="flex-shrink-0 transition-all duration-300 group-hover:scale-110 group-hover:shadow-xl group-hover:shadow-primary/10">
-                    
-                  </div>
+                <Link
+                  href="/"
+                  onClick={closeMobileMenu}
+                  className="flex items-center gap-4 group"
+                >
+                  <div className="flex-shrink-0 transition-all duration-300 group-hover:scale-110 group-hover:shadow-xl group-hover:shadow-primary/10"></div>
                 </Link>
               </div>
               <button
@@ -104,7 +107,9 @@ export default function Sidebar() {
 
           {/* Collapse Button - Always visible on desktop, hidden on mobile */}
           {!isMobile && (
-            <div className={`${collapsed ? "mt-4" : "mb-4"} flex justify-center`}>
+            <div
+              className={`${collapsed ? "mt-4" : "mb-4"} flex justify-center`}
+            >
               <button
                 onClick={toggleCollapse}
                 title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
@@ -128,17 +133,20 @@ export default function Sidebar() {
             </div>
           )}
 
-
           {/* Content - Only shown when NOT collapsed on desktop, always shown on mobile */}
           {(isMobile || !collapsed) && (
             <>
               {/* Logo & Title - Only on desktop when not collapsed */}
               {!isMobile && !collapsed && (
                 <div className="hidden lg:flex items-center gap-4 px-2 mb-8">
-                  <Link href="/" className="flex items-center justify-center w-full group">
+                  <Link
+                    href="/"
+                    className="flex items-center justify-center w-full group"
+                  >
                     <div className="flex-shrink-0 transition-all duration-300 group-hover:scale-110">
-                    <div className="text-2xl text-primary font-bold">ProAce Academy</div>
-                    
+                      <div className="text-2xl text-primary font-bold">
+                        ProAce Academy
+                      </div>
                     </div>
                   </Link>
                 </div>
@@ -147,33 +155,34 @@ export default function Sidebar() {
               {/* Menu Items - Only show when not collapsed */}
               {!collapsed && (
                 <>
+                  <details>
+                    <summary
+                      onClick={isMobile ? closeMobileMenu : undefined}
+                      className="hover:bg-blue-300/70 rounded-xl px-4 py-3 transition-all duration-300 hover:shadow-md flex items-center gap-3 font-semibold"
+                    >
+                      <LayoutDashboard className="h-6 w-6 text-primary" />
+                      <Link href="/admin/trainers" className="flex-1">
+                        Trainers
+                      </Link>
+                      {/* <span>Trainers</span> */}
+                    </summary>
+                  </details>
 
-                    <details>
-                      <summary
-                        onClick={isMobile ? closeMobileMenu : undefined}
-                        className="hover:bg-blue-300/70 rounded-xl px-4 py-3 transition-all duration-300 hover:shadow-md flex items-center gap-3 font-semibold"
-                      >
-                        <LayoutDashboard className="h-6 w-6 text-primary" />
-                        <Link href="/admin/trainers" className="flex-1">Trainers</Link>
-                        {/* <span>Trainers</span> */}
-                      </summary>
-                    </details>
-           
-
-      
+                  {user?.adminType === "owner" && (
                     <details>
                       <summary
                         onClick={isMobile ? closeMobileMenu : undefined}
                         className="hover:bg-blue-300/70 rounded-xl px-4 py-3 transition-all duration-300 hover:shadow-md flex items-center gap-3 font-semibold"
                       >
                         <Users className="h-6 w-6 text-primary" />
-                        <Link href="/admin/employees" className="flex-1">Employees</Link>
+                        <Link href="/admin/employees" className="flex-1">
+                          Employees
+                        </Link>
                       </summary>
                     </details>
-      
+                  )}
 
-
-                    {/* <details>
+                  {/* <details>
                       <summary
                         onClick={isMobile ? closeMobileMenu : undefined}
                         className="hover:bg-blue-300/70 rounded-xl px-4 py-3 transition-all duration-300 hover:shadow-md flex items-center gap-3 font-semibold"
@@ -182,9 +191,6 @@ export default function Sidebar() {
                         <Link href="/admin/analytics" className="flex-1">Analytics</Link>
                       </summary>
                     </details> */}
-      
-
-                  
 
                   <div className="divider my-8 opacity-50"></div>
 
@@ -210,5 +216,3 @@ export default function Sidebar() {
     </>
   );
 }
-
-
