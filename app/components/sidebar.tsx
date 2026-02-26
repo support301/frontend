@@ -145,7 +145,7 @@ export default function Sidebar() {
                   >
                     <div className="flex-shrink-0 transition-all duration-300 group-hover:scale-110">
                       <div className="text-2xl text-primary font-bold">
-                        ProAce Academy
+                        Arun Tgak
                       </div>
                     </div>
                   </Link>
