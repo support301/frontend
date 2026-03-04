@@ -17,7 +17,7 @@ export default function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* Quick access card to Trainers */}
-            <Link href="/admin/trainers" className="card bg-base-100 shadow-xl hover:shadow-2xl transition-shadow">
+            <Link href="/admin/trainers" className="card shadow-xl hover:shadow-2xl transition-shadow">
               <div className="card-body">
                 <div className="flex items-center justify-between">
                   <div>

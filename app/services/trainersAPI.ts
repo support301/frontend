@@ -26,6 +26,7 @@ export interface Trainer {
   phone: string;
   status: TrainerStatus;
   experienceYears: number;
+  professionalExperience?: number;
   education: string;
   hourlyRate: HourlyRate;
   languages?: string;
@@ -55,7 +56,9 @@ export interface CreateTrainerPayload {
   lastName?: string;
   email: string;
   phone: string;
+  quickSkills?: string; // For quick skill selection in the form
   experienceYears: number;
+  professionalExperience: number;
   education: string;
   hourlyRate: HourlyRate;
   languages?: string;
@@ -82,14 +85,11 @@ export interface UpdateTrainerPayload {
   description?: string;
 }
 
-/* =========================================================
-   🔹 RTK QUERY API
-   ========================================================= */
 
 export const trainerApi = createApi({
   reducerPath: "trainerApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "https://backend-g0z1.onrender.com/api/trainers/",
+    baseUrl: "http://localhost:8000/api/trainers/",
     prepareHeaders: (headers) => {
       if (typeof window !== "undefined") {
         const token = localStorage.getItem("token");

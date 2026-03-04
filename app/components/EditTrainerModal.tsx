@@ -7,6 +7,7 @@ import {
   useGetTrainerByIdQuery,
   useUpdateTrainerMutation,
 } from "@/app/services/trainersAPI"; // ← adjust path if needed
+import { getUserFromToken } from "@/app/validations/currentUser";
 
 interface EditTrainerModalProps {
   trainerId: string | null;
@@ -27,7 +28,7 @@ export default function EditTrainerModal({
   );
 
   const [updateTrainer, { isLoading: isUpdating }] = useUpdateTrainerMutation();
-
+  const user = getUserFromToken();
   const [form, setForm] = useState({
     firstName: "",
     lastName: "",
@@ -84,6 +85,7 @@ export default function EditTrainerModal({
   if (!isOpen) return null;
 
   return (
+    
     <div className="fixed inset-0 z-50">
       {/* backdrop */}
       <div
@@ -92,6 +94,7 @@ export default function EditTrainerModal({
       />
 
       {/* modal */}
+      {user?.adminType !== "BDE" && (
       <div className="absolute inset-0 flex items-center justify-center p-4">
         <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
           {/* header */}
@@ -156,7 +159,7 @@ export default function EditTrainerModal({
 
                 <div>
                   <label className="label">
-                    <span className="label-text font-medium">Phone</span>
+                    <span className="label-text font-medium">Phone Number</span>
                   </label>
                   <input
                     type="tel"
@@ -319,6 +322,9 @@ export default function EditTrainerModal({
           )}
         </div>
       </div>
+      )}
     </div>
   );
 }
+
+

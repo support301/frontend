@@ -18,6 +18,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-toastify";
+import PhoneInput from "react-phone-number-input";
+import "react-phone-number-input/style.css";
 
 const STATUS_OPTIONS = [
   "ACTIVE",
@@ -50,18 +52,31 @@ export default function AddTrainerPage() {
     email: "",
     phone: "",
     status: "PENDING APPROVAL" as const,
-    experienceYears: 0,
+    experienceYears: "",
+    professionalExperience: "",
     education: "",
-    hourlyRate: { currency: "INR", min: 0, max: 0 },
+    hourlyRate: { currency: "INR", min: "", max: "" },
     languages: "",
     skills: [] as string[],
     subjects: "",
     title: "",
+    quickSkills: " ",
     description: "",
   });
 
   const [skillInput, setSkillInput] = useState("");
   const [customSkill, setCustomSkill] = useState("");
+
+  const QUICK_SKILL_CATEGORIES = [
+    "IT",
+    "SCHOOL CIRCULARS",
+    "LANGUAGES",
+    "DANCE",
+    "MUSIC",
+    "ARTS",
+    "OTHERS",
+    "HOBBY",
+  ] as const;
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -75,13 +90,13 @@ export default function AddTrainerPage() {
         ...prev,
         hourlyRate: {
           ...prev.hourlyRate,
-          [field]: field === "currency" ? value : parseFloat(value) || 0,
+          [field]: value,
         },
       }));
     } else {
       setFormData((prev) => ({
         ...prev,
-        [name]: name === "experienceYears" ? parseFloat(value) || 0 : value,
+        [name]: value,
       }));
     }
   };
@@ -130,17 +145,21 @@ export default function AddTrainerPage() {
 
       await createTrainer({
         ...formData,
+        professionalExperience: Number(formData.professionalExperience),
+        hourlyRate: {
+          ...formData.hourlyRate,
+          min: Number(formData.hourlyRate.min),
+          max: Number(formData.hourlyRate.max),
+        },
+        experienceYears: Number(formData.experienceYears),
         lastName: formData.lastName || "",
         languages: formData.languages || "",
         skills: formData.skills.length > 0 ? formData.skills : [], // ✅ FIXED
         subjects: formData.subjects || "",
         title: formData.title || "",
         description: formData.description || "",
+        quickSkills: formData.quickSkills,
       }).unwrap();
-
-
-
-
 
       toast.success("Trainer added successfully!");
       router.push("/admin/trainers");
@@ -212,7 +231,6 @@ export default function AddTrainerPage() {
                   <div className="form-control">
                     <label className="label-text mb-2 block font-medium">
                       Professional Email
-                      <span className="text-red-500 ml-1">*</span>
                     </label>
                     <input
                       type="email"
@@ -229,14 +247,16 @@ export default function AddTrainerPage() {
                       Phone Number
                       <span className="text-red-500 ml-1">*</span>
                     </label>
-                    <input
-                      type="tel"
-                      name="phone"
+                    <PhoneInput
+                      defaultCountry="IN"
                       value={formData.phone}
-                      onChange={handleChange}
-                      className="input input-bordered rounded-2xl outline-none focus:input-primary"
-                      placeholder="+91 9876543210"
-                      required
+                      onChange={(value) =>
+                        setFormData((prev) => ({ ...prev, phone: value || "" }))
+                      }
+                      international
+                      countryCallingCodeEditable={false}
+                      placeholder="+91 98765 43210"
+                      className="input input-bordered rounded-2xl outline-none focus:input-primary" // ← reuse same class if you have dark theme styles
                     />
                   </div>
                 </div>
@@ -281,7 +301,7 @@ export default function AddTrainerPage() {
                         className="input input-bordered rounded-2xl outline-none focus:input-secondary"
                       />
                     </div>
-                    <div className="form-control md:col-span-2">
+                    <div className="form-control">
                       <label className="label-text mb-2 block font-medium">
                         Education Background
                       </label>
@@ -293,6 +313,19 @@ export default function AddTrainerPage() {
                         className="input input-bordered rounded-2xl outline-none focus:input-secondary"
                         placeholder="e.g. Masters in Computer Science"
                         required
+                      />
+                    </div>
+                    <div className="form-control">
+                      <label className="label-text mb-2 block font-medium">
+                        Teaching Experience (Years)
+                        <span className="text-red-500 ml-1">*</span>
+                      </label>
+                      <input
+                        type="number"
+                        name="professionalExperience"
+                        value={formData.professionalExperience}
+                        onChange={handleChange}
+                        className="input input-bordered rounded-2xl outline-none focus:input-secondary"
                       />
                     </div>
                   </div>
@@ -387,10 +420,35 @@ export default function AddTrainerPage() {
                   ))}
                 </div>
 
+                <div>
+                  <label className="label-text mb-3 block font-medium italic opacity-70">
+                    Select Quick Skills
+                    <span className="text-red-500 ml-1">*</span>
+                  </label>
+                  <div className="flex flex-wrap gap-2">
+                    {QUICK_SKILL_CATEGORIES.map((skill) => (
+                      <button
+                        key={skill}
+                        type="button"
+                        onClick={() => handleAddSkill(skill)}
+                        disabled={formData.quickSkills?.includes(skill)}
+                        className={`btn btn-xs rounded-full transition-all ${formData.quickSkills?.includes(skill) ? "btn-disabled opacity-30" : "btn-outline btn-accent hover:scale-105"}`}
+                      >
+                        {skill}{" "}
+                        {formData.quickSkills?.includes(skill) ? (
+                          <Check size={12} />
+                        ) : (
+                          <Plus size={12} />
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                   <div>
                     <label className="label-text mb-3 block font-medium italic opacity-70">
-                      Quick Select Skills
+                      Skills
                       <span className="text-red-500 ml-1">*</span>
                     </label>
                     <div className="flex flex-wrap gap-2">
@@ -432,7 +490,7 @@ export default function AddTrainerPage() {
                   <div className="space-y-4">
                     <div className="form-control">
                       <label className="label-text mb-2 block font-medium">
-                        Languages
+                        Languages Known
                       </label>
                       <div className="relative">
                         <Globe
@@ -489,7 +547,7 @@ export default function AddTrainerPage() {
                 <div className="form-control mt-4">
                   {" "}
                   <label className="label-text mb-2 block font-medium">
-                    Full Biography
+                    Short Introduction
                   </label>{" "}
                   <textarea
                     name="description"
